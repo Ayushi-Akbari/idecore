@@ -1,0 +1,41 @@
+/* App.css or another CSS file */
+@keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .fadeIn {
+    animation: fadeIn 1.5s forwards;
+  }
+  
+  .slideIn {
+    animation: slideIn 1.5s forwards;
+  }
+  
+  .slideIn1 {
+    animation-delay: 2s;
+  }
+  
+  .slideIn2 {
+    animation-delay: 2.5s;
+  }
+  
+  .slideIn3 {
+    animation-delay: 3s;
+  }
+  
