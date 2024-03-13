@@ -26,15 +26,23 @@ const FavScreen = () => {
   };
 
   // Assuming removeFavorite is a method in your context to remove a favorite
-  const handleRemove = (id) => {
-    removeFavorite(id); // Update context state
+  const handleRemove = async (id) => {
+    // removeFavorite(id); // Update context state
     console.log(id);
 
-    axios.delete(`http://localhost:4001/fav/${id}`, {
+    await axios.delete(`http://localhost:4001/fav/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
+
+    const res = await axios.get("http://localhost:4001/fav/", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(res.data.data);
+    setData(res.data.data);
   };
 
   const [data, setData] = useState([]);

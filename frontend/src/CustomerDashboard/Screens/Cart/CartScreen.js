@@ -211,10 +211,12 @@ const CartScreen = () => {
           Authorization: `Bearer ${token}`, //
         },
       });
+      console.log("res.data.data : ", res.data.data);
       setData({
-        total: res.data.data[0].total,
-        items: res.data.data[0].items,
+        total: 0,
+        items: [],
       });
+      console.log(data);
     } catch (e) {
       console.error("Error:", e);
     }

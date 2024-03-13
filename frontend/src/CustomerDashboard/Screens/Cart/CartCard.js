@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Counter from "../../components/Counter";
+import crossIcon from "../../images/cross.png";
 import cross from "../../images/cross.png";
 import axios from "axios";
 
@@ -17,6 +18,10 @@ const styles = {
     marginTop: "2vh",
     width: "100%",
   },
+  crossIcon: {
+    width: "2vw",
+    height: "2vw",
+  },
   imageContainer: {
     cursor: "pointer",
     display: "flex",
@@ -24,6 +29,14 @@ const styles = {
     height: "10vw",
     flexDirection: "column",
     alignItems: "flex-start",
+  },
+  removeButton: {
+    position: "absolute",
+    top: "0.5vw",
+    right: "0.5vw",
+    background: "transparent",
+    border: "none",
+    cursor: "pointer",
   },
   itemImage: {
     width: "50%",
@@ -93,7 +106,7 @@ const CartCard = ({
         />
       </div>
       <p style={{ ...styles.totalPrice, flex: "20%" }}>${subTotal}</p>{" "}
-      <button
+      {/* <button
         onClick={() => onDelete(item._id)}
         style={{
           color: "red",
@@ -103,6 +116,9 @@ const CartCard = ({
         }}
       >
         Delete
+      </button> */}
+      <button style={styles.removeButton} onClick={() => onDelete(item._id)}>
+        <img src={crossIcon} alt="Remove" style={styles.crossIcon} />
       </button>
       {/* Total Price */}
       <div></div>
