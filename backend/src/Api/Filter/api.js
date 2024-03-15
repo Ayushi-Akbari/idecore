@@ -1,22 +1,22 @@
 const express = require("express");
 const router = express.Router();
 const productModel = require("../product/schema");
-const catagoryModel = require("../Catagory/schema");
+const categoryModel = require("../Category/schema");
 
 router.use(express.json());
 
-router.post("/filterByCatagory", async (req, res) => {
+router.post("/filterByCategory", async (req, res) => {
   try {
     console.log("hiii");
     console.log("req.body.categoryFilter : ", req.body.categoryFilter);
-    const catagoryData = await catagoryModel.findOne({
+    const categoryData = await categoryModel.findOne({
       name: req.body.categoryFilter,
     });
     let filterData = [];
-    console.log("catagoryData : ", catagoryData);
-    if (catagoryData) {
+    console.log("categoryData : ", categoryData);
+    if (categoryData) {
       filterData = await productModel.find({
-        catagoryId: catagoryData._id,
+        categoryId: categoryData._id,
       });
       console.log(filterData.length);
     } else {
@@ -25,7 +25,7 @@ router.post("/filterByCatagory", async (req, res) => {
     return res.send({
       data: filterData,
       status: 200,
-      message: "filter By catagory",
+      message: "filter By category",
     });
   } catch (e) {
     return res.send({

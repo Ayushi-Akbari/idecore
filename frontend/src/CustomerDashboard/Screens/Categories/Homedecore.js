@@ -10,7 +10,7 @@ const Homedecore = () => {
   const [ratingFilter, setRatingFilter] = useState(0);
   const [products, setProducts] = useState([]);
   const [data, setData] = useState([]);
-  const [catagory, setCatagory] = useState([]); // This state holds the list of products to display
+  const [category, setCategory] = useState([]); // This state holds the list of products to display
 
   useEffect(() => {
     let filteredProducts = []; // Use a temporary array to filter the products

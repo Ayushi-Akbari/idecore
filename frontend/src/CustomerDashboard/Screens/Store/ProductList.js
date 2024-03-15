@@ -21,7 +21,7 @@ const ProductList = ({ products }) => {
           <ProductCard
             key={product._id}
             id={product._id}
-            imageUrl={product.image_url}
+            imageUrl={product.image_url[0]}
             title={product.title}
             description={product.description}
             price={`$${product.price.toFixed(2)}`}

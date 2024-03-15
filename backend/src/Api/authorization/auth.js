@@ -6,8 +6,8 @@ const { log } = require("console");
 const auth = async (req, res, next) => {
   try {
     // const token = req.cookies.jwt;
-    // console.log("hiii");
-    const token = req.body.token;
+    console.log("hiii");
+    const token = req.headers.authorization;
     // console.log("token :" + token);
 
     // const token =
@@ -23,7 +23,7 @@ const auth = async (req, res, next) => {
       token.replace("Bearer ", ""),
       "atuhjiokbvdftghyujgdefghyjbcfhhgds"
     );
-    console.log(verifyUser);
+    console.log("verifyUser : ", verifyUser);
 
     const user = await sellerModel.findOne({ _id: verifyUser._id });
     // console.log(user);

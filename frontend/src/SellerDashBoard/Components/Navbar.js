@@ -13,10 +13,7 @@ export default function Navbar() {
 
   return (
     <div>
-      <nav
-        className="navbar navbar-expand-lg bg-body-tertiary"
-        style={{ padding: "0", position: "fixed", zIndex: "1000", flex: 1 }}
-      >
+      <nav className="navbar navbar-expand-lg bg-body-tertiary">
         <div
           className="container-fluid"
           style={{ backgroundColor: "rgba(73,47,29,1)", width: "100vw" }}
@@ -61,12 +58,12 @@ export default function Navbar() {
               <li className="nav-item">
                 <Link
                   className={`nav-link ${
-                    isActive("/SellerDashboard/Home") ? "active" : ""
+                    isActive("/SellerDashboard/ProductData") ? "active" : ""
                   }`}
                   aria-current="page"
-                  to="/SellerDashboard/Home"
+                  to="/SellerDashboard/ProductData"
                 >
-                  Product
+                  ProductData
                 </Link>
               </li>
             </ul>

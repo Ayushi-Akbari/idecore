@@ -164,7 +164,7 @@ const CartScreen = () => {
         },
       })
       .then((res) => {
-        console.log(res.data.data[0]);
+        console.log(res.data.data);
         setData({
           total: res.data.data[0].total,
           items: res.data.data[0].items,
@@ -177,21 +177,33 @@ const CartScreen = () => {
 
   console.log("data :", data);
 
-  const updateItemQuantity = (id, quantity) => {
+  const updateItemQuantity = async (id, quantity) => {
     console.log("id : ", id);
     console.log("quantity : ", quantity);
 
+    const res1 = await axios.put(
+      `http://localhost:4001/cart/${id}`,
+      { quantity },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, //
+        },
+      }
+    );
+    console.log(res1.data);
+
     axios
-      .post("http://localhost:4001/cart", {
-        items: [
-          {
-            product: "phone",
-            quantity: 8,
-          },
-        ],
+      .get(`http://localhost:4001/cart/`, {
+        headers: {
+          Authorization: `Bearer ${token}`, //
+        },
       })
       .then((res) => {
-        console.log(res.data);
+        console.log(res.data.data);
+        setData({
+          total: res.data.data[0].total,
+          items: res.data.data[0].items,
+        });
       })
       .catch((e) => {
         console.log(e);
@@ -274,7 +286,7 @@ const CartScreen = () => {
       {data.items.map((item) => (
         <CartCard
           key={item._id}
-          id={item._id}
+          id={item.productId}
           item={item}
           image_url={item.image_url}
           title={item.product}

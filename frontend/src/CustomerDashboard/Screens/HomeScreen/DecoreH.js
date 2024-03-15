@@ -17,7 +17,7 @@ const DecoreH = () => {
   }, [categoryFilter]);
   useEffect(() => {
     axios
-      .get("http://localhost:4001/catagory")
+      .get("http://localhost:4001/category")
       .then((res) => {
         setCategoryFilter(res.data.data[0].name);
       })
@@ -28,7 +28,7 @@ const DecoreH = () => {
 
   useEffect(() => {
     axios
-      .post("http://localhost:4001/filterByCatagory", {
+      .post("http://localhost:4001/filterByCategory", {
         categoryFilter: categoryFilter,
       })
       .then((res) => {
@@ -60,7 +60,7 @@ const DecoreH = () => {
           <Homecard
             key={product._id}
             id={product._id}
-            imageUrl={product.image_url}
+            imageUrl={product.image_url[0]}
             title={product.title}
             price={`$${product.price.toFixed(2)}`}
             rating={product.rating}

@@ -56,7 +56,7 @@ const FilterCat = ({
 
   const toggleFilters = () => {
     setShowFilters(!showFilters);
-    // setCatagory("");
+    // setCategory("");
   };
   // console.log("toggleFilters : ", toggleFilters);
   console.log("showFilters : ", showFilters);

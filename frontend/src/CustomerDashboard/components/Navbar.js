@@ -7,6 +7,7 @@ import profile from "../images/profile.png";
 import cart from "../images/cart.png";
 import cartfilled from "../images/cartfilled.png";
 import axios from "axios";
+import Searchbar from "./Searchbar";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -172,6 +173,7 @@ export default function Navbar() {
               </li>
             </ul>
           </div>
+          <Searchbar />
           <button
             className="nav-link"
             style={{ background: "none", border: "none", outline: "none" }}

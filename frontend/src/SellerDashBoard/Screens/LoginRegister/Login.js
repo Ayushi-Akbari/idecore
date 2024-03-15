@@ -80,7 +80,7 @@ const SellerLoginForm = ({ onToggleForm }) => {
 
   const Navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const data = { username: username, password: password };
     console.log(data);
@@ -91,8 +91,8 @@ const SellerLoginForm = ({ onToggleForm }) => {
         console.log(res.data);
         if (res.data.code === 200) {
           alert("Login Success");
-          localStorage.setItem("token", res.data.token);
-          localStorage.setItem("userId", res.data.userId);
+          localStorage.setItem("seller_token", res.data.token);
+          localStorage.setItem("seller_userId", res.data.userId);
           Navigate("/SellerDashboard/*");
         } else if (res.data.code === 404) {
           if (res.data.message === "Enter valid user") {

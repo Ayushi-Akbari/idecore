@@ -4,14 +4,10 @@ const jwt = require("jsonwebtoken");
 const UserModel = require("../User/schema");
 
 const productSchema = new mongoose.Schema({
-  catagoryName: { type: String },
+  categoryName: { type: String },
   title: { type: String },
   description: { type: String, minlength: 5 },
-  image_url: { type: String },
-  image_url_1: { type: String },
-  image_url_2: { type: String },
-  image_url_3: { type: String },
-  image_url_4: { type: String },
+  image_url: [{ type: String }],
   price: {
     type: Number,
     validate: {
@@ -31,7 +27,7 @@ const productSchema = new mongoose.Schema({
   ],
   rating: {
     type: Number,
-    default: 1,
+    default: 5,
     validate: {
       validator: (value) => value > 0 && value < 6,
       message: "Rating should be between 1 and 5",
@@ -51,9 +47,9 @@ const productSchema = new mongoose.Schema({
     // required: true, // Reference to the User model (registration collection)
   },
 
-  catagoryId: {
+  categoryId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Catagory",
+    ref: "Category",
   },
   createdAt: {
     type: Date,
@@ -103,7 +99,7 @@ module.exports = ProductModel;
 //     },
 //   },
 
-//   catagory: {
+//   category: {
 //     type: String,
 //     required: true,
 //     trim: true,

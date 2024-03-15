@@ -47,8 +47,6 @@ router.post(
       });
       console.log("sellerData : ", sellerData);
 
-      const registerd = await sellerData.save();
-
       const ByuerData = new userModel({
         name: req.body.name,
         username: req.body.username,
@@ -59,7 +57,8 @@ router.post(
 
       console.log("gkjgf");
 
-      const registerdUser = await ByuerData.save();
+      await ByuerData.save();
+      const registerd = await sellerData.save();
 
       console.log("registerd : ", registerd);
       console.log("registerdUser : ", registerdUser);

@@ -1,62 +1,75 @@
-import React, { useState, useEffect } from "react";
-import ImageUpload from "./ImageInput";
+import React, { useState, useEffect, useCallback } from "react";
+import { useDropzone } from "react-dropzone";
 import axios from "axios";
 
 const styles = {
-  form: {
+  formContainer: {
+    display: "flex",
+    width: "100vw",
+    alignItems: "center", // Changed to center align the items vertically
+    justifyContent: "space-evenly",
+    padding: "20px",
+  },
+  imagePickerContainer: {
+    width: "40vw",
+    height: "auto", // Changed to auto to adjust according to content
     display: "flex",
     flexDirection: "column",
-    maxWidth: "600px",
-    margin: "auto auto",
-    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "10px",
+    padding: "20px",
+    border: "2px solid rgba(110,89,75,1)",
+    borderRadius: "4px",
+    backgroundColor: "#f9f9f9",
   },
-  label: {
-    fontWeight: "bold",
-    marginTop: "20px",
-    marginBottom: "8px",
-    color: "#333",
+  form: {
+    width: "40%", // Adjusted to 40% for symmetry
+    display: "flex",
+    flexDirection: "column",
+    gap: "20px",
+  },
+  imageList: {
+    display: "grid",
+    gridTemplateColumns: "repeat(3, 1fr)", // 3 columns
+    gap: "10px",
+    marginTop: "10px",
+    width: "100%", // Full width of its container
+    minHeight: "100px", // Minimum height to ensure container visibility
+    maxHeight: "200px", // Maximum height to keep the layout tidy
+  },
+  imageItem: {
+    width: "100%", // Adjusted for grid layout
+    height: "100px", // Fixed height for consistency
+    position: "relative",
+    borderRadius: "4px",
+    overflow: "hidden",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    boxShadow: "0px 0px 8px rgba(0,0,0,0.1)",
+  },
+  deleteButton: {
+    position: "absolute",
+    top: "5px",
+    right: "5px",
+    cursor: "pointer",
+    background: "red",
+    color: "white",
+    border: "none",
+    borderRadius: "50%",
+    width: "25px",
+    height: "25px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    fontSize: "14px",
   },
   input: {
     padding: "10px",
     fontSize: "16px",
-    border: "1px solid rgba(110,89,75,1)",
+    border: "1px solid #ccc",
     borderRadius: "4px",
-  },
-  textarea: {
-    padding: "10px",
-    fontSize: "16px",
-    border: "1px solid rgba(110,89,75,1)",
-    borderRadius: "4px",
-    minHeight: "100px",
-  },
-  select: {
-    padding: "10px",
-    fontSize: "16px",
-    border: "1px solid rgba(110,89,75,1)",
-    borderRadius: "4px",
-  },
-  submitButton: {
-    marginTop: "20px",
-    padding: "10px 20px",
-    fontSize: "18px",
-    color: "#fff",
-    backgroundColor: "rgba(110,89,75,1)",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
-  },
-  imageUploadContainer: {
-    display: "flex",
-    justifyContent: "space-evenly",
-    flexWrap: "wrap",
-    margin: "2vw",
-  },
-  imageCard: {
-    width: "40%",
-    padding: "10px",
-    border: "1px solid rgba(110,89,75,1)",
-    borderRadius: "4px",
-    marginBottom: "10px",
   },
 };
 
@@ -65,209 +78,184 @@ const ProductForm = () => {
   const [category, setCategory] = useState("");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
-  const [imageURL, setImageURL] = useState("");
-  const [imageURL1, setImageURL1] = useState("");
-  const [imageURL2, setImageURL2] = useState("");
-  const [imageURL3, setImageURL3] = useState("");
-  const [imageURL4, setImageURL4] = useState("");
-  // const [data, setData] = useState([]);
-  const [catagory1, setCatagory1] = useState([]);
   const [stocks, setStocks] = useState("");
+  const [category1, setCategory1] = useState([]);
+  const [images, setImages] = useState([]);
 
   useEffect(() => {
     axios
-      .get("http://localhost:4001/catagory/")
+      .get("http://localhost:4001/category/")
       .then((res) => {
         console.log(res.data.data);
-        setCatagory1(res.data.data);
+        setCategory1(res.data.data);
       })
       .catch((e) => {
         console.log(e);
       });
   }, []);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const data = {
-      title,
-      category,
-      description,
-      price: parseFloat(price),
-      imageURL,
-      imageURL1,
-      imageURL2,
-      imageURL3,
-      imageURL4,
-    };
-    console.log(data.category);
+  const onDrop = useCallback(
+    (acceptedFiles) => {
+      if (images.length + acceptedFiles.length > 5) {
+        alert("Maximum of 5 images can be added.");
+      } else {
+        const newImages = [...images, ...acceptedFiles].slice(0, 5);
+        setImages(newImages);
+        console.log("Added images:", newImages); // Log added images
+      }
+    },
+    [images]
+  );
 
-    const token = localStorage.getItem("token", e.target.token);
-    // const userId = localStorage.getItem("userId", e.target.userId);
-    // console.log(token);
-    // console.log("userId : ", userId);
+  const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
-    axios
-      .post("http://localhost:4001/product/", { token, data })
-      .then((res) => {
-        console.log(res.data);
-        if (res.data.status === 200) {
-          alert("data saved sucessfully");
-        }
-      });
-  };
-
-  const handleImageDrop = (setImage) => (acceptedFiles) => {
-    const file = acceptedFiles[0];
-    setImage(URL.createObjectURL(file));
-  };
-
-  const handleDeleteImage = (setImage) => () => {
-    setImage("");
+  const handleDeleteImage = (index) => () => {
+    const updatedImages = images.filter((_, i) => i !== index);
+    setImages(updatedImages);
+    console.log("Remaining images:", updatedImages); // Log remaining images after deletion
   };
 
   const isFormValid = () => {
     return (
-      title &&
-      category &&
-      price &&
-      description &&
-      imageURL &&
-      imageURL1 &&
-      imageURL2 &&
-      imageURL3 &&
-      imageURL4
+      title && category && price && description && stocks && images.length > 0
     );
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // Form submission logic here
+    console.log("Form submitted with images:", images[0]);
+
+    const data = new FormData();
+    images.forEach((image, index) => {
+      data.append(`image_url`, image);
+    });
+
+    data.append("title", title);
+    data.append("category", category);
+    data.append("description", description);
+    data.append("price", parseFloat(price));
+    data.append("stocks", parseInt(stocks));
+
+    for (let pair of data.entries()) {
+      console.log(pair[0] + ": " + pair[1]);
+    }
+    console.log("data :", data);
+
+    try {
+      const token = localStorage.getItem("token");
+      console.log(token);
+      const res = await axios.post("http://localhost:4001/product/", data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(res.data);
+      if (res.data.status === 200) {
+        alert("Data saved successfully");
+      }
+    } catch (error) {
+      console.error("Error saving product:", error);
+      // Handle error
+    }
+  };
+
   return (
-    <form onSubmit={handleSubmit} style={styles.form}>
-      <div
-        style={{
-          paddingHorizontal: "1vw",
-          marginTop: "3vw",
-          border: "2px solid rgba(110,89,75,1)",
-        }}
-      >
+    <div style={styles.formContainer}>
+      <div style={styles.imagePickerContainer}>
         <div
+          {...getRootProps({ className: "dropzone" })}
           style={{
-            fontWeight: "600",
-            marginTop: "20px",
-            marginBottom: "8px",
-            textAlign: "center",
-            color: "#333",
+            width: "100%",
+            height: "40vh",
+            border: "2px dashed #888",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          Drop Your product images here
+          <input {...getInputProps()} />
+          <p>Drag 'n' drop images here, or click to select images (max 5)</p>
         </div>
-        <div style={styles.imageUploadContainer}>
-          <ImageUpload
-            index={0}
-            image={{ imageURL }}
-            onDrop={handleImageDrop(setImageURL)}
-            onDelete={handleDeleteImage(setImageURL)}
-          />
-          <ImageUpload
-            index={1}
-            image={{ imageURL: imageURL1 }}
-            onDrop={handleImageDrop(setImageURL1)}
-            onDelete={handleDeleteImage(setImageURL1)}
-          />
-          <ImageUpload
-            index={2}
-            image={{ imageURL: imageURL2 }}
-            onDrop={handleImageDrop(setImageURL2)}
-            onDelete={handleDeleteImage(setImageURL2)}
-          />
-          <ImageUpload
-            index={3}
-            image={{ imageURL: imageURL3 }}
-            onDrop={handleImageDrop(setImageURL3)}
-            onDelete={handleDeleteImage(setImageURL3)}
-          />
-          <ImageUpload
-            index={4}
-            image={{ imageURL: imageURL4 }}
-            onDrop={handleImageDrop(setImageURL4)}
-            onDelete={handleDeleteImage(setImageURL4)}
-          />
+        <div style={styles.imageList}>
+          {images.map((file, index) => (
+            <div key={index} style={styles.imageItem}>
+              <img
+                src={URL.createObjectURL(file)}
+                alt={`preview ${index}`}
+                style={{ width: "100%", height: "100%", objectFit: "contain" }}
+              />{" "}
+              {/* Adjusted objectFit to 'cover' */}
+              <button
+                onClick={handleDeleteImage(index)}
+                style={styles.deleteButton}
+              >
+                ×
+              </button>
+            </div>
+          ))}
         </div>
       </div>
-
-      <label style={styles.label}>
-        Title <span style={{ color: "red" }}>*</span>
-      </label>
-      <input
-        type="text"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        required
-        style={styles.input}
-      />
-
-      <label style={styles.label}>
-        Category <span style={{ color: "red" }}>*</span>
-      </label>
-      <select
-        value={category}
-        onChange={(e) => setCategory(e.target.value)}
-        required
-        style={styles.select}
-      >
-        <option value="">Select a category</option>
-        {catagory1.map((category, index) => (
-          <option key={index} value={category.name}>
-            {category.name}
-          </option>
-        ))}
-        {/* <option value="Home Decor">Home Decor</option>
-        <option value="Bed Room">Bed Room</option>
-        <option value="Kids">Kids</option>
-        <option value="Kitchen">Kitchen</option>
-        <option value="Storage">Storage</option>
-        <option value="Organizers">Organizers</option> */}
-      </select>
-
-      <label style={styles.label}>
-        Description <span style={{ color: "red" }}>*</span>
-      </label>
-      <textarea
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        required
-        style={styles.textarea}
-      />
-
-      <label style={styles.label}>
-        Price <span style={{ color: "red" }}>*</span>
-      </label>
-      <input
-        type="number"
-        value={price}
-        onChange={(e) => setPrice(e.target.value)}
-        required
-        style={styles.input}
-      />
-
-      <label style={styles.label}>
-        Stock <span style={{ color: "red" }}>*</span>
-      </label>
-      <input
-        type="number"
-        value={stocks}
-        onChange={(e) => setStocks(e.target.value)}
-        required
-        style={styles.input}
-      />
-
-      <button
-        type="submit"
-        disabled={!isFormValid()}
-        style={styles.submitButton}
-        // onClick={addProduct}
-      >
-        Submit
-      </button>
-    </form>
+      <form onSubmit={handleSubmit} style={styles.form}>
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Title"
+          required
+          style={styles.input}
+        />
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          required
+          style={styles.input}
+        >
+          <option value="">Select a category</option>
+          {category1.map((category, index) => (
+            <option key={index} value={category.name}>
+              {category.name}
+            </option>
+          ))}
+        </select>
+        <input
+          type="number"
+          value={price}
+          onChange={(e) => setPrice(e.target.value)}
+          placeholder="Price"
+          required
+          style={styles.input}
+        />
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="Description"
+          required
+          style={{ ...styles.input, height: "100px" }}
+        />
+        <input
+          type="number"
+          value={stocks}
+          onChange={(e) => setStocks(e.target.value)}
+          placeholder="Stocks"
+          required
+          style={styles.input}
+        />
+        <button
+          type="submit"
+          disabled={!isFormValid()}
+          style={{
+            ...styles.input,
+            backgroundColor: "rgba(110,89,75,1)",
+            color: "white",
+            cursor: "pointer",
+          }}
+        >
+          Submit
+        </button>
+      </form>
+    </div>
   );
 };
 

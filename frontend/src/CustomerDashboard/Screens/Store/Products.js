@@ -10,7 +10,7 @@ const Products = () => {
   const [ratingFilter, setRatingFilter] = useState(0);
   const [uniqueCategories, setUniqueCategories] = useState([]);
   const [data, setData] = useState([]);
-  const [fCatagory, setFCatagory] = useState([]);
+  const [fCategory, setFCategory] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -18,7 +18,8 @@ const Products = () => {
     axios
       .get("http://localhost:4001/product/")
       .then((res) => {
-        // console.log(res.data.data);
+        console.log(res.data.data);
+        console.log(`data:image/jpeg;base64,${res.data.data[0].image_url}`);
         setAllProducts(res.data.data);
       })
       .catch((e) => {
@@ -28,7 +29,7 @@ const Products = () => {
 
   useEffect(() => {
     axios
-      .post("http://localhost:4001/filterByCatagory/", {
+      .post("http://localhost:4001/filterByCategory/", {
         categoryFilter: categoryFilter,
       })
       .then((res) => {
@@ -45,7 +46,7 @@ const Products = () => {
         ratingFilter: ratingFilter,
       })
       .then((res) => {
-        // console.log("ratingFilter ", res.data);
+        console.log("ratingFilter ", res.data);
         setAllProducts(res.data.data);
         // console.log("allProducts : ", allProducts);
       })
@@ -61,6 +62,7 @@ const Products = () => {
       })
       .then((res) => {
         // console.log("ratingFilter ", res.data);
+
         setAllProducts(res.data.data);
         // console.log("allProducts : ", allProducts);
       })

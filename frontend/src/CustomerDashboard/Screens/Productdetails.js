@@ -28,12 +28,14 @@ const ProductDetails = () => {
   // console.log("product 1 : ", product);
 
   const token = localStorage.getItem("token");
-  // console.log(token);
+  console.log(token);
+  // console.log(id);
   useEffect(() => {
     console.log("isFavorite updated:", isFavorite);
   }, [isFavorite]);
 
   useEffect(() => {
+    console.log("hiii");
     console.log(id);
 
     axios
@@ -52,13 +54,15 @@ const ProductDetails = () => {
       .catch((e) => {
         console.log(e);
       });
-  }, [id]);
+  }, []);
 
   console.log();
 
   // useEffect(() => {
   //   setIsFavorite(favorites.includes(product?._id));
   // }, [favorites, product?._id]);
+
+  console.log();
 
   const cart = (product, quantity) => {
     console.log("product : ", product);
@@ -124,125 +128,142 @@ const ProductDetails = () => {
     }
   };
 
-  console.log("product : ", product);
-  console.log("isFavorite : ", isFavorite);
-
   const updateSelectedImage = (imageUrl) => setSelectedImageUrl(imageUrl);
 
-  if (!product) {
-    return <div>Product not found</div>;
-  }
+  // if (!product) {
+  //   return <div>Product not found</div>;
+  // }
 
   return (
     <>
-      <img
-        src={back}
-        alt="Back"
-        style={styles.backButton}
-        onClick={handleBackClick}
-      />
-      <div style={styles.container}>
-        <div style={styles.imagePreviewContainer}>
+      {product ? (
+        <>
           <img
-            src={selectedImageUrl}
-            alt={product.title}
-            style={styles.mainImage}
+            src={back}
+            alt="Back"
+            style={styles.backButton}
+            onClick={handleBackClick}
           />
-        </div>
-        <div style={styles.thumbnailContainer}>
-          {[
-            product.image_url,
-            product.image_url_1,
-            product.image_url_2,
-            product.image_url_3,
-          ].map((imageUrl, index) => (
-            <div
-              key={index}
-              style={styles.thumbnail}
-              onClick={() => updateSelectedImage(imageUrl)}
-              onMouseEnter={() => updateSelectedImage(imageUrl)}
-            >
-              <img
-                src={imageUrl}
-                alt={`${product.title} ${index}`}
-                style={styles.thumbnailImage}
-              />
+          <div style={styles.container}>
+            <div style={styles.imagePreviewContainer}>
+              {product.image_url && product.image_url[0] && (
+                <img
+                  src={`http://localhost:4001/images/${product.image_url[0]}`}
+                  alt={`${product.title}`}
+                  style={styles.thumbnailImage}
+                />
+              )}
             </div>
-          ))}
-        </div>
-        <div style={styles.detailsContainer}>
-          <h2 style={styles.title}>{product.title}</h2>
-          <p style={styles.description}>{product.description}</p>
-          <div style={styles.rating}>
-            <Rating rating={product.rating} />
+            <div style={styles.thumbnailContainer}>
+              {product.image_url &&
+                product.image_url.map((imageUrl, index) => (
+                  <div
+                    key={index}
+                    style={styles.thumbnail}
+                    onClick={() =>
+                      updateSelectedImage(
+                        `http://localhost:4001/images/${imageUrl}`
+                      )
+                    }
+                    onMouseEnter={() =>
+                      updateSelectedImage(
+                        `http://localhost:4001/images/${imageUrl}`
+                      )
+                    }
+                  >
+                    <img
+                      src={`http://localhost:4001/images/${imageUrl}`}
+                      alt={`${product.title} ${index}`}
+                      style={styles.thumbnailImage}
+                    />
+                  </div>
+                ))}
+            </div>
+            <div style={styles.detailsContainer}>
+              <h2 style={styles.title}>{product.title}</h2>
+              <p style={styles.description}>{product.description}</p>
+              <div style={styles.rating}>
+                <Rating rating={product.rating} />
+              </div>
+              <p style={styles.price}>
+                Price: ${product?.price ? product?.price.toFixed(2) : ""}
+              </p>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginBottom: "2vh",
+                }}
+              >
+                <Counter quantity={quantity} setQuantity={setQuantity} />
+                <button
+                  onClick={handleFavoriteToggle}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    outline: "none",
+                  }}
+                >
+                  <img
+                    src={isFavorite ? favfilled : fav}
+                    alt="Favorite"
+                    style={{
+                      width: "1.5vw",
+                      height: "1.5vw",
+                      cursor: "pointer",
+                    }}
+                  />
+                </button>
+              </div>
+              <div style={styles.actionButtons}>
+                <button
+                  style={{
+                    ...styles.button,
+                    backgroundColor: isAddToCartHovered
+                      ? "rgba(246,231,220,0.5)"
+                      : "#F6E7DC",
+                    color: isAddToCartHovered
+                      ? "rgba(110,89,75,1)"
+                      : "rgba(110,89,75,1)",
+                    border: isAddToCartHovered
+                      ? "1px solid rgba(110,89,75,1)"
+                      : "1px solid rgba(110,89,75,1)",
+                  }}
+                  onMouseEnter={() => setIsAddToCartHovered(true)}
+                  onMouseLeave={() => setIsAddToCartHovered(false)}
+                  // onClick={() => addToCart(product, quantity)}
+                  onClick={() => {
+                    cart(product, quantity);
+                  }}
+                >
+                  Add to Cart
+                </button>
+                <button
+                  style={{
+                    ...styles.button,
+                    backgroundColor: isBuyNowHovered
+                      ? "rgba(110,89,75,0.5)"
+                      : "rgba(110,89,75,1)",
+                    color: isBuyNowHovered
+                      ? "rgba(246,239,234,1)"
+                      : "rgba(246,239,234,1)",
+                    border: isBuyNowHovered
+                      ? "1px solid rgba(110,89,75,1)"
+                      : "1px solid rgba(110,89,75,1)",
+                  }}
+                  onMouseEnter={() => setIsBuyNowHovered(true)}
+                  onMouseLeave={() => setIsBuyNowHovered(false)}
+                >
+                  Buy Now
+                </button>
+              </div>
+            </div>
           </div>
-          <p style={styles.price}>
-            Price: ${product?.price ? product?.price.toFixed(2) : ""}
-          </p>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              marginBottom: "2vh",
-            }}
-          >
-            <Counter quantity={quantity} setQuantity={setQuantity} />
-            <button
-              onClick={handleFavoriteToggle}
-              style={{ background: "none", border: "none", outline: "none" }}
-            >
-              <img
-                src={isFavorite ? favfilled : fav}
-                alt="Favorite"
-                style={{ width: "1.5vw", height: "1.5vw", cursor: "pointer" }}
-              />
-            </button>
-          </div>
-          <div style={styles.actionButtons}>
-            <button
-              style={{
-                ...styles.button,
-                backgroundColor: isAddToCartHovered
-                  ? "rgba(246,231,220,0.5)"
-                  : "#F6E7DC",
-                color: isAddToCartHovered
-                  ? "rgba(110,89,75,1)"
-                  : "rgba(110,89,75,1)",
-                border: isAddToCartHovered
-                  ? "1px solid rgba(110,89,75,1)"
-                  : "1px solid rgba(110,89,75,1)",
-              }}
-              onMouseEnter={() => setIsAddToCartHovered(true)}
-              onMouseLeave={() => setIsAddToCartHovered(false)}
-              // onClick={() => addToCart(product, quantity)}
-              onClick={() => {
-                cart(product, quantity);
-              }}
-            >
-              Add to Cart
-            </button>
-            <button
-              style={{
-                ...styles.button,
-                backgroundColor: isBuyNowHovered
-                  ? "rgba(110,89,75,0.5)"
-                  : "rgba(110,89,75,1)",
-                color: isBuyNowHovered
-                  ? "rgba(246,239,234,1)"
-                  : "rgba(246,239,234,1)",
-                border: isBuyNowHovered
-                  ? "1px solid rgba(110,89,75,1)"
-                  : "1px solid rgba(110,89,75,1)",
-              }}
-              onMouseEnter={() => setIsBuyNowHovered(true)}
-              onMouseLeave={() => setIsBuyNowHovered(false)}
-            >
-              Buy Now
-            </button>
-          </div>
-        </div>
-      </div>
+        </>
+      ) : (
+        <div>Product not found</div>
+      )}
     </>
   );
 };

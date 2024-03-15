@@ -67,7 +67,7 @@ const ProductFilters = ({
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:4001/catagory/").then((res) => {
+    axios.get("http://localhost:4001/category/").then((res) => {
       // console.log(res.data.data);
       setData(res.data.data);
     });
@@ -99,9 +99,9 @@ const ProductFilters = ({
                 onChange={(e) => setCategoryFilter(e.target.value)}
               >
                 <option value="">All Categories</option>
-                {data.map((catagory, index) => (
-                  <option key={index} value={catagory.name}>
-                    {catagory.name}
+                {data.map((category, index) => (
+                  <option key={index} value={category.name}>
+                    {category.name}
                   </option>
                 ))}
               </select>

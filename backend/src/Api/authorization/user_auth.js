@@ -3,7 +3,7 @@ const UserModel = require("../User/schema");
 const { json } = require("express");
 const { log } = require("console");
 
-const auth = async (req, res, next) => {
+const user_auth = async (req, res, next) => {
   try {
     // const token = req.cookies.jwt;
     // console.log("hiii");
@@ -22,7 +22,8 @@ const auth = async (req, res, next) => {
     if (
       req.method === "DELETE" ||
       req.method === "GET" ||
-      req.method === "POST"
+      req.method === "POST" ||
+      req.method === "PUT"
     ) {
       token = req.headers.authorization;
     }
@@ -52,4 +53,4 @@ const auth = async (req, res, next) => {
   }
 };
 
-module.exports = auth;
+module.exports = user_auth;

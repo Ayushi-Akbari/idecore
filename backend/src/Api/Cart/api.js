@@ -3,11 +3,12 @@ const router = new express.Router();
 const cartModel = require("./schema");
 const ProductModel = require("../product/schema");
 const UserModel = require("../User/schema");
-const auth = require("../authorization/user_auth");
+// const auth = require("../authorization/user_auth");
+const user_auth = require("../authorization/user_auth");
 
 router.use(express.json());
 
-router.post("/cart", auth, async (req, res) => {
+router.post("/cart", user_auth, async (req, res) => {
   try {
     const userId = req.user._id;
     const product = req.body.product;
@@ -33,7 +34,7 @@ router.post("/cart", auth, async (req, res) => {
       } else {
         // If the product does not exist, add a new item
         userExists.items.unshift({
-          image_url: req.body.product.image_url,
+          image_url: req.body.product.image_url[0],
           productId: req.body.product._id,
           product: req.body.product.title,
           quantity: quantity,
@@ -46,6 +47,7 @@ router.post("/cart", auth, async (req, res) => {
       userExists.total = userExists.items.reduce((acc, item) => {
         return acc + item.subTotal;
       }, 0);
+
       const updatedUser = await userExists.save();
 
       return res.status(200).send({
@@ -59,7 +61,7 @@ router.post("/cart", auth, async (req, res) => {
         user: userId,
         items: [
           {
-            image_url: req.body.product.image_url,
+            image_url: req.body.product.image_url[0],
             productId: req.body.product._id,
             product: req.body.product.title,
             quantity: req.body.quantity,
@@ -89,7 +91,7 @@ router.post("/cart", auth, async (req, res) => {
   }
 });
 
-router.get("/cart", auth, async (req, res) => {
+router.get("/cart", user_auth, async (req, res) => {
   try {
     const token = req.query.token;
     const user = req.user;
@@ -119,29 +121,59 @@ router.get("/cart", auth, async (req, res) => {
   }
 });
 
-router.post("/cart/update", async (req, res) => {
-  // try {
-  // const userId = req.user._id;
-  // const productId = req.body.productId;
-  // const quantity = req.body.quantity;
+router.put("/cart/:id", user_auth, async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const productId = req.params.id;
+    const quantity = req.body.quantity;
+    console.log(userId);
+    console.log(productId);
+    console.log(quantity);
+    console.log(req.body);
+    const cartItem = await cartModel.findOne({ user: req.user._id });
+    console.log(cartItem.items[0]);
 
-  // console.log(req.body);
-  return res.status(500).send({
-    data: null,
-    status: 200,
-    message: "done",
-  });
-  // Rest of the route implementation...
-  // } catch (e) {
-  //   return res.status(500).send({
-  //     data: e,
-  //     status: 500,
-  //     message: "Internal Server Error",
-  //   });
-  // }
+    if (!cartItem) {
+      return res.status(404).send({
+        data: null,
+        status: 404,
+        message: "Cart item not found",
+      });
+    }
+    const itemToUpdate = cartItem.items.find(
+      (item) => item.productId === productId
+    );
+    console.log("hiii");
+    console.log(itemToUpdate);
+    itemToUpdate.quantity = quantity;
+
+    // Recalculate subtotal and total
+    cartItem.items.forEach((item) => {
+      item.subTotal = item.quantity * item.price;
+    });
+    cartItem.total = cartItem.items.reduce(
+      (acc, item) => acc + item.subTotal,
+      0
+    );
+
+    console.log("cartItem : ", cartItem);
+    // Save the updated cart
+    await cartItem.save();
+    return res.status(200).send({
+      data: cartItem,
+      status: 200,
+      message: "done",
+    });
+  } catch (e) {
+    return res.status(500).send({
+      data: e,
+      status: 500,
+      message: "Internal Server Error",
+    });
+  }
 });
 
-// router.delete("/cart/:id", auth, async (req, res) => {
+// router.delete("/cart/:id", user_auth, async (req, res) => {
 //   try {
 //     console.log(req.params.id);
 //     const itemId = req.params.id;
@@ -161,7 +193,7 @@ router.post("/cart/update", async (req, res) => {
 //   }
 // });
 
-router.delete("/cart/:id", auth, async (req, res) => {
+router.delete("/cart/:id", user_auth, async (req, res) => {
   try {
     const userId = req.user._id;
     const itemId = req.params.id;
@@ -206,7 +238,7 @@ router.delete("/cart/:id", auth, async (req, res) => {
   }
 });
 
-router.delete("/cart", auth, async (req, res) => {
+router.delete("/cart", user_auth, async (req, res) => {
   try {
     const user = req.user;
     // console.log(user);

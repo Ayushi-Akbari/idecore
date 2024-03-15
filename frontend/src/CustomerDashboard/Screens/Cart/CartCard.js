@@ -30,7 +30,7 @@ const styles = {
     flexDirection: "column",
     alignItems: "flex-start",
   },
-  removeButton: {
+  removeButton1: {
     position: "absolute",
     top: "0.5vw",
     right: "0.5vw",
@@ -77,6 +77,7 @@ const CartCard = ({
   onUpdateQuantity,
 }) => {
   // console.log("CartCard props:", id, title, price, quantity, subTotal);
+  console.log(id);
   const navigate = useNavigate();
   const openProductDetails = () => navigate(`/CustomerDashboard/product/${id}`);
 
@@ -86,7 +87,11 @@ const CartCard = ({
         style={{ ...styles.imageContainer, flex: "40%" }}
         onClick={openProductDetails}
       >
-        <img src={image_url} alt={title} style={styles.itemImage} />
+        <img
+          src={`http://localhost:4001/images/${image_url}`}
+          alt={title}
+          style={styles.itemImage}
+        />
         <p
           style={{
             marginTop: "1vh",
@@ -106,7 +111,7 @@ const CartCard = ({
         />
       </div>
       <p style={{ ...styles.totalPrice, flex: "20%" }}>${subTotal}</p>{" "}
-      {/* <button
+      <button
         onClick={() => onDelete(item._id)}
         style={{
           color: "red",
@@ -116,10 +121,10 @@ const CartCard = ({
         }}
       >
         Delete
-      </button> */}
-      <button style={styles.removeButton} onClick={() => onDelete(item._id)}>
-        <img src={crossIcon} alt="Remove" style={styles.crossIcon} />
       </button>
+      {/* <button style={styles.removeButton1} onClick={() => onDelete(item._id)}>
+        <img src={crossIcon} alt="Remove" style={styles.crossIcon} />
+      </button> */}
       {/* Total Price */}
       <div></div>
     </div>
